@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load i18n %}
+{% load booking_extras %}
+
+{% block content %}
+<!-- Booking page header with title and Create Booking button -->
+<div class="bg-white rounded-xl shadow-md p-4 mb-6 border border-blue-100">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <!-- Page Title -->
+            <h2 class="text-xl md:text-2xl font-extrabold text-[#0E6A6A] tracking-tight">Smart Classroom Booking</h2>
+        </div>
+        <div class="flex items-center space-x-4">
+            <!-- Create Booking Button -->
+            <a href="{% url 'create_booking' %}" class="bg-gradient-to-r from-[#0E6A6A] to-[#2EC4B6] text-white px-6 py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                + Create Booking
+            </a>
+            <!-- View Toggle Buttons -->
+            <div class="flex bg-gradient-to-r from-blue-50 to-blue-100 rounded-full p-0.5 shadow-inner border border-blue-200">
+                <button class="px-4 py-1 rounded-full font-bold bg-white text-[#0E6A6A] shadow hover:bg-blue-50 transition focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm">
+                    Week View
+                </button>
+                <button class="px-4 py-1 rounded-full font-semibold text-gray-600 hover:text-[#0E6A6A] hover:bg-white transition focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm">
+                    Day View
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Booking calendar table -->
+<div class="overflow-x-auto">
+  <table class="min-w-full bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl shadow-2xl border border-blue-100 text-[15px]">
+    <thead>
+      <tr>
+        <!-- Time column header (sticky) -->
+        <th class="p-4 bg-gradient-to-r from-[#0E6A6A] to-[#2EC4B6] text-white border-b border-r text-left sticky left-0 z-20 font-extrabold shadow-inner text-lg tracking-wide rounded-tl-2xl">
+          Time
+        </th>
+        {% for day, date in day_dates %}
+        <th class="p-4 bg-gradient-to-b from-blue-100 to-cyan-50 border-b border-r text-center font-bold text-[#0E6A6A] shadow-inner text-lg {% if forloop.last %}rounded-tr-2xl{% endif %}">
+          <div class="flex flex-col items-center">
+            <span class="text-base font-bold">{{ day }}</span>
+            <span class="text-xs text-blue-500 font-normal tracking-wide">{{ date }}</span>
+          </div>
+        </th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for hour in hours %}
+      <tr class="divide-x even:bg-white/60 odd:bg-blue-50/40 hover:bg-cyan-100/40 transition">
+        <!-- Time cell -->
+        <td class="p-3 bg-gradient-to-r from-gray-50 to-blue-50 border-r font-semibold text-gray-700 sticky left-0 z-10 w-24 shadow-inner text-base {% if forloop.last %}rounded-bl-2xl{% endif %}">
+          {% if hour == 0 %}
+            12:00 AM
+          {% elif hour < 12 %}
+            {{ hour }}:00 AM
+          {% elif hour == 12 %}
+            12:00 PM
+          {% else %}
+            {{ hour|add:"-12" }}:00 PM
+          {% endif %}
+        </td>
+        {% for day, date in day_dates %}
+        <td class="p-0 h-20 text-center relative group cursor-pointer transition {% if forloop.parentloop.last and forloop.last %}rounded-br-2xl{% endif %}">
+          {% with booking=None %}
+            {% for b in bookings %}
+              {% if not booking and b.start_time|date:'l' == day and b.start_time|date:'G'|add:0 == hour %}
+                {% with b as booking %}
+                  <div class="absolute inset-1 flex flex-col items-center justify-center bg-gradient-to-br {{ user_color_map|dict_get:booking.user.id }} text-white text-xs p-3 rounded-xl shadow-lg border-2 border-green-700 z-10 animate-fade-in">
+                    <div class="font-bold text-base mb-1">{{ booking.user.username }}</div>
+                    <div class="text-[13px] font-medium">{{ booking.purpose }}</div>
+                    <div class="text-[11px] mt-1 bg-white/20 px-2 py-0.5 rounded-full">
+                      {{ booking.start_time|date:'g:i A' }}–{{ booking.end_time|date:'g:i A' }}
+                    </div>
+                  </div>
+                {% endwith %}
+              {% endif %}
+            {% endfor %}
+            {% if not booking %}
+              <div class="flex items-center justify-center h-full w-full">
+                <form method="get" action="{% url 'create_booking' %}">
+                  <input type="hidden" name="day" value="{{ day }}">
+                  <input type="hidden" name="date" value="{{ date }}">
+                  <input type="hidden" name="hour" value="{{ hour }}">
+                  <button type="submit" class="w-11/12 h-5/6 bg-gradient-to-br from-white to-blue-50 border-2 border-dashed border-blue-200 rounded-xl text-blue-500 group-hover:border-[#0E6A6A] group-hover:text-[#0E6A6A] font-semibold text-sm shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    Book
+                  </button>
+                </form>
+              </div>
+            {% endif %}
+          {% endwith %}
+          <div class="absolute inset-0 bg-[#0E6A6A] opacity-0 group-hover:opacity-10 transition rounded-xl pointer-events-none"></div>
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

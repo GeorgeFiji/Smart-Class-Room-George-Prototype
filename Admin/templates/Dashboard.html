@@ -1,0 +1,137 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Smart Class Room Booking{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10">
+    <!-- Profile Card -->
+    <div class="flex flex-col md:flex-row gap-8 items-center bg-white rounded-2xl shadow-lg p-8 border border-blue-100 mb-8">
+        <div class="flex-shrink-0">
+            <!-- Simple Avatar -->
+            <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username }}&background=0E6A6A&color=fff&size=128" alt="Avatar" class="w-32 h-32 rounded-full border-4 border-blue-200 shadow object-cover">
+        </div>
+        <div class="flex-1">
+            <h1 class="text-3xl font-extrabold text-[#0E6A6A] mb-2">Welcome, {{ user.get_full_name|default:user.username }}</h1>
+            <div class="flex flex-wrap gap-4 mb-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-900 text-sm font-semibold shadow">
+                    <svg class="w-4 h-4 mr-1 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    {{ user.username }}
+                </span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-900 text-sm font-semibold shadow">
+                    <svg class="w-4 h-4 mr-1 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 01-8 0M12 3v4m0 0a4 4 0 01-4 4H4m8-4a4 4 0 014 4h4" /></svg>
+                    {{ user.email }}
+                </span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-gray-700 text-sm">
+                <div><span class="font-semibold">First Name:</span> {{ user.first_name }}</div>
+                <div><span class="font-semibold">Last Name:</span> {{ user.last_name }}</div>
+            </div>
+        </div>
+        <!-- Donut Chart for Booking Status (smaller, replaces total bookings card) -->
+        <div class="flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl shadow p-4 min-w-[140px] min-h-[140px] w-[140px] h-[140px] relative">
+            <canvas id="bookingStatusChart" width="120" height="120"></canvas>
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span class="text-3xl font-extrabold text-[#0E6A6A]">{{ total_count }}</span>
+                <span class="text-xs font-semibold text-blue-900">Total</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donut Chart Script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('bookingStatusChart').getContext('2d');
+            const data = {
+                labels: ['Pending', 'Approved', 'Rejected'],
+                datasets: [{
+                    data: [
+                        {{ pending_count }},
+                        {{ approved_count }},
+                        {{ rejected_count }}
+                    ],
+                    backgroundColor: [
+                        '#fde68a', // yellow
+                        '#bbf7d0', // green
+                        '#f23c3cff'  // red
+                    ],
+                    borderColor: [
+                        '#facc15',
+                        '#22c55e',
+                        '#ef4444'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    let value = context.parsed;
+                                    return `${label}: ${value}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    <!-- Bookings Table -->
+    <div class="bg-white rounded-2xl shadow-lg border border-blue-100 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-[#0E6A6A]">Your Bookings</h2>
+            <a href="{% url 'create_booking' %}" class="inline-flex items-center px-4 py-2 bg-[#0E6A6A] text-white rounded-lg shadow hover:bg-[#095959] font-semibold transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                New Booking
+            </a>
+        </div>
+        {% with bookings=user.booking_set.all %}
+        {% if bookings %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-xl shadow border text-sm">
+                <thead>
+                    <tr class="bg-blue-50 text-[#0E6A6A]">
+                        <th class="py-2 px-3 text-left">Purpose</th>
+                        <th class="py-2 px-3 text-left">Start Time</th>
+                        <th class="py-2 px-3 text-left">End Time</th>
+                        <th class="py-2 px-3 text-left">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr class="border-b hover:bg-blue-50/40 transition">
+                        <td class="py-2 px-3 font-semibold">{{ booking.purpose }}</td>
+                        <td class="py-2 px-3">{{ booking.start_time|date:'Y-m-d H:i' }}</td>
+                        <td class="py-2 px-3">{{ booking.end_time|date:'Y-m-d H:i' }}</td>
+                        <td class="py-2 px-3">
+                            <span class="inline-block px-2 py-1 rounded-full text-xs font-semibold
+                                {% if booking.status == 'approved' %}bg-green-100 text-green-700
+                                {% elif booking.status == 'pending' %}bg-yellow-100 text-yellow-700
+                                {% elif booking.status == 'rejected' %}bg-red-100 text-red-700
+                                {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                {{ booking.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="text-gray-500">You have not made any bookings yet.</p>
+        {% endif %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock %}

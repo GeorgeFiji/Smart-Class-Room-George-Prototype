@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block content %}
+<div class="max-w-lg mx-auto bg-white rounded-xl shadow-md p-8 mt-8">
+    <h2 class="text-2xl font-bold text-[#0E6A6A] mb-4">Book the Classroom</h2>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div>
+            <label class="block font-semibold mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="text-red-600 text-xs">{{ field.errors|striptags }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div>
+            <label class="block font-semibold mb-1" for="id_receipt">Upload Payment Receipt (Image)</label>
+            <input type="file" name="receipt" id="id_receipt" accept="image/*" class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A] bg-blue-50/30" />
+            {% if form.receipt.errors %}
+                <div class="text-red-600 text-xs">{{ form.receipt.errors|striptags }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="w-full py-2 px-4 bg-[#0E6A6A] hover:bg-[#2EC4B6] text-white font-semibold rounded-lg shadow transition">Book Now</button>
+    </form>
+</div>
+{% endblock %}

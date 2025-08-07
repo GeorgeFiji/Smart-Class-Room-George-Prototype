@@ -1,0 +1,151 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Smart Classroom Booking{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-10">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-[#0E6A6A]">Edit Profile</h1>
+        <p class="text-gray-600 mt-2">Update your profile information and profile picture</p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-6 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% elif message.tags == 'success' %}bg-green-100 text-green-700 border border-green-200{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-700 border border-yellow-200{% else %}bg-blue-100 text-blue-700 border border-blue-200{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Edit Profile Form -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 border border-blue-100">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Profile Picture Section -->
+            <div class="text-center">
+                <h2 class="text-xl font-semibold text-[#0E6A6A] mb-4">Profile Picture</h2>
+                <div class="flex flex-col items-center space-y-4">
+                    <!-- Current Profile Picture -->
+                    <div class="relative">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="Current Profile" class="w-32 h-32 rounded-full border-4 border-purple-200 shadow object-cover">
+                        {% else %}
+                            <div class="w-32 h-32 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold text-4xl border-4 border-purple-200 shadow">
+                                {{ user.get_full_name|default:user.username|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- File Upload -->
+                    <div class="w-full max-w-xs">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Choose new picture</label>
+                        {{ profile_form.profile_picture }}
+                        {% if profile_form.profile_picture.help_text %}
+                            <p class="text-xs text-gray-500 mt-1">{{ profile_form.profile_picture.help_text }}</p>
+                        {% endif %}
+                        {% if profile_form.profile_picture.errors %}
+                            <div class="text-red-600 text-xs mt-1">{{ profile_form.profile_picture.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-gray-200">
+
+            <!-- Personal Information Section -->
+            <div>
+                <h2 class="text-xl font-semibold text-[#0E6A6A] mb-4">Personal Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A] bg-gray-50">
+                    </div>
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A] bg-gray-50">
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A] bg-gray-50" required>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input type="text" value="{{ user.username }}" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500" disabled>
+                    <p class="text-xs text-gray-500 mt-1">Username cannot be changed</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                <button type="submit" class="flex-1 py-3 px-6 bg-gradient-to-r from-[#0E6A6A] to-[#2EC4B6] text-white font-semibold rounded-lg hover:from-[#2EC4B6] hover:to-[#0E6A6A] transition shadow-lg">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Save Changes
+                </button>
+                <a href="{% url 'profile' %}" class="flex-1 py-3 px-6 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition text-center">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Account Settings -->
+    <div class="mt-8 bg-white rounded-2xl shadow-lg p-8 border border-blue-100">
+        <h2 class="text-xl font-semibold text-[#0E6A6A] mb-4">Account Settings</h2>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                    <h3 class="font-medium text-gray-900">Change Password</h3>
+                    <p class="text-sm text-gray-600">Update your account password for security</p>
+                </div>
+                <button onclick="alert('Password change functionality coming soon!')" class="px-4 py-2 bg-[#0E6A6A] text-white rounded-lg hover:bg-[#2EC4B6] transition">
+                    Change
+                </button>
+            </div>
+            
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                    <h3 class="font-medium text-gray-900">Account Status</h3>
+                    <p class="text-sm text-gray-600">Your account is active and verified</p>
+                </div>
+                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                    Active
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom file input styling */
+    input[type="file"] {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        background-color: #f9fafb;
+        color: #374151;
+        font-size: 0.875rem;
+    }
+    
+    input[type="file"]:focus {
+        outline: none;
+        ring: 2px;
+        ring-color: #0E6A6A;
+        border-color: #0E6A6A;
+    }
+</style>
+{% endblock %}

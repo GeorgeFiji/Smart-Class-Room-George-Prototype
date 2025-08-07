@@ -1,0 +1,797 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrahead %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_admin.css' %}">
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block content_title %}
+<div class="dashboard-header">
+    <div class="hero-section">
+        <h1 class="hero-title">
+            <span class="hero-icon">⚡</span>
+            Smart Classroom Dashboard
+        </h1>
+        <p class="hero-subtitle">Enterprise-grade classroom management system with real-time analytics</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- System Status Cards -->
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+                <div class="stat-number">{{ total_users|default:"127" }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-trend positive">
+                <span class="trend-icon">↗</span>
+                <span class="trend-text">+12%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card success">
+            <div class="stat-icon">📚</div>
+            <div class="stat-content">
+                <div class="stat-number">{{ total_bookings|default:"45" }}</div>
+                <div class="stat-label">Active Bookings</div>
+            </div>
+            <div class="stat-trend positive">
+                <span class="trend-icon">↗</span>
+                <span class="trend-text">+8%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card warning">
+            <div class="stat-icon">🏫</div>
+            <div class="stat-content">
+                <div class="stat-number">{{ available_rooms|default:"23" }}</div>
+                <div class="stat-label">Available Rooms</div>
+            </div>
+            <div class="stat-trend neutral">
+                <span class="trend-icon">→</span>
+                <span class="trend-text">0%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card info">
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+                <div class="stat-number">${{ monthly_revenue|default:"12,450" }}</div>
+                <div class="stat-label">Monthly Revenue</div>
+            </div>
+            <div class="stat-trend positive">
+                <span class="trend-icon">↗</span>
+                <span class="trend-text">+15%</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions Grid -->
+    <div class="quick-actions">
+        <h2 class="section-title">
+            <span class="section-icon">🚀</span>
+            Quick Actions
+        </h2>
+        
+        <div class="actions-grid">
+            <a href="{% url 'admin:Booking_booking_add' %}" class="action-card">
+                <div class="action-icon">📅</div>
+                <div class="action-content">
+                    <h3>New Booking</h3>
+                    <p>Create a new classroom booking</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+            
+            <a href="{% url 'admin:auth_user_add' %}" class="action-card">
+                <div class="action-icon">👤</div>
+                <div class="action-content">
+                    <h3>Add User</h3>
+                    <p>Create new user account</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+            
+            <a href="{% url 'admin:Booking_booking_changelist' %}" class="action-card">
+                <div class="action-icon">📊</div>
+                <div class="action-content">
+                    <h3>View Reports</h3>
+                    <p>Booking analytics & reports</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+            
+            <a href="{% url 'admin:Booking_profile_changelist' %}" class="action-card">
+                <div class="action-icon">⚙️</div>
+                <div class="action-content">
+                    <h3>Settings</h3>
+                    <p>System configuration</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Recent Activity & System Status -->
+    <div class="dashboard-grid">
+        <div class="dashboard-panel">
+            <h2 class="panel-title">
+                <span class="panel-icon">📈</span>
+                System Status
+            </h2>
+            <div class="status-indicators">
+                <div class="status-item">
+                    <div class="status-dot online"></div>
+                    <span class="status-label">Database</span>
+                    <span class="status-value">Online</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot online"></div>
+                    <span class="status-label">API Services</span>
+                    <span class="status-value">Running</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot online"></div>
+                    <span class="status-label">Cache</span>
+                    <span class="status-value">Active</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot warning"></div>
+                    <span class="status-label">Storage</span>
+                    <span class="status-value">85% Used</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-panel">
+            <h2 class="panel-title">
+                <span class="panel-icon">🔔</span>
+                Notifications
+            </h2>
+            <div class="notification-list">
+                <div class="notification-item">
+                    <div class="notification-icon success">✓</div>
+                    <div class="notification-content">
+                        <p class="notification-text">System backup completed successfully</p>
+                        <p class="notification-time">2 hours ago</p>
+                    </div>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-icon info">ℹ</div>
+                    <div class="notification-content">
+                        <p class="notification-text">5 new booking requests pending approval</p>
+                        <p class="notification-time">4 hours ago</p>
+                    </div>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-icon warning">⚠</div>
+                    <div class="notification-content">
+                        <p class="notification-text">Server maintenance scheduled for tomorrow</p>
+                        <p class="notification-time">1 day ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- App List -->
+    {% if app_list %}
+    <div class="app-list-section">
+        <h2 class="section-title">
+            <span class="section-icon">🏢</span>
+            Application Management
+        </h2>
+        
+        <div class="app-grid">
+            {% for app in app_list %}
+            <div class="app-module">
+                <h3 class="app-title">{{ app.name }}</h3>
+                {% if app.models %}
+                <div class="model-list">
+                    {% for model in app.models %}
+                    <div class="model-item">
+                        <a href="{{ model.admin_url }}" class="model-link">
+                            <span class="model-icon">
+                                {% if model.object_name == "User" %}👤
+                                {% elif model.object_name == "Group" %}👥
+                                {% elif model.object_name == "Booking" %}📅
+                                {% elif model.object_name == "Profile" %}👤
+                                {% else %}📊{% endif %}
+                            </span>
+                            <span class="model-name">{{ model.name }}</span>
+                        </a>
+                        <div class="model-actions">
+                            {% if model.add_url %}
+                            <a href="{{ model.add_url }}" class="model-action add" title="Add {{ model.name }}">+</a>
+                            {% endif %}
+                            {% if model.admin_url %}
+                            <a href="{{ model.admin_url }}" class="model-action view" title="View {{ model.name }}">→</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .dashboard-container {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: transparent;
+    }
+    
+    .dashboard-header {
+        margin-bottom: 3rem;
+    }
+    
+    .hero-section {
+        text-align: center;
+        padding: 3rem 0;
+        background: linear-gradient(135deg, rgba(2, 132, 199, 0.1) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(2, 132, 199, 0.1) 100%);
+        border-radius: 2rem;
+        border: 1px solid rgba(229, 231, 235, 0.5);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #0ea5e9, #8b5cf6, #0284c7);
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #0284c7;
+        margin: 0 0 1rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        letter-spacing: -0.025em;
+    }
+    
+    .hero-icon {
+        font-size: 3.5rem;
+        background: linear-gradient(135deg, #0284c7, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: #64748b;
+        font-weight: 500;
+        margin: 0;
+        letter-spacing: 0.025em;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 2rem;
+        padding: 2rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        transition: opacity 0.3s ease;
+        opacity: 0;
+    }
+    
+    .stat-card.primary::before { background: linear-gradient(90deg, #0284c7, #0ea5e9); }
+    .stat-card.success::before { background: linear-gradient(90deg, #10b981, #059669); }
+    .stat-card.warning::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .stat-card.info::before { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card:hover::before {
+        opacity: 1;
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        width: 4rem;
+        height: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card.primary .stat-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .stat-card.success .stat-icon { background: linear-gradient(135deg, #10b981, #059669); }
+    .stat-card.warning .stat-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .stat-card.info .stat-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    
+    .stat-content {
+        flex: 1;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .stat-trend {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    
+    .stat-trend.positive { color: #059669; }
+    .stat-trend.negative { color: #dc2626; }
+    .stat-trend.neutral { color: #6b7280; }
+    
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .section-icon {
+        font-size: 1.75rem;
+        background: linear-gradient(135deg, #0284c7, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .action-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .action-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(2, 132, 199, 0.05), transparent);
+        transition: left 0.3s ease;
+    }
+    
+    .action-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border-color: #0284c7;
+    }
+    
+    .action-card:hover::before {
+        left: 100%;
+    }
+    
+    .action-icon {
+        font-size: 2rem;
+        width: 3.5rem;
+        height: 3.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0284c7, #8b5cf6);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .action-content {
+        flex: 1;
+    }
+    
+    .action-content h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .action-content p {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+    
+    .action-arrow {
+        font-size: 1.25rem;
+        color: #0284c7;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+    }
+    
+    .action-card:hover .action-arrow {
+        transform: translateX(4px);
+    }
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .dashboard-panel {
+        background: white;
+        border-radius: 2rem;
+        padding: 2rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .dashboard-panel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .panel-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .panel-icon {
+        font-size: 1.5rem;
+    }
+    
+    .status-indicators {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f9fafb;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .status-item:hover {
+        background: #f3f4f6;
+        transform: translateX(4px);
+    }
+    
+    .status-dot {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+    }
+    
+    .status-dot.online { color: #10b981; }
+    .status-dot.warning { color: #f59e0b; }
+    .status-dot.error { color: #ef4444; }
+    
+    .status-label {
+        font-weight: 500;
+        color: #374151;
+        flex: 1;
+    }
+    
+    .status-value {
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+    
+    .notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .notification-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f9fafb;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .notification-item:hover {
+        background: #f3f4f6;
+        transform: translateX(4px);
+    }
+    
+    .notification-icon {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: white;
+    }
+    
+    .notification-icon.success { background: #10b981; }
+    .notification-icon.info { background: #0284c7; }
+    .notification-icon.warning { background: #f59e0b; }
+    
+    .notification-content {
+        flex: 1;
+    }
+    
+    .notification-text {
+        color: #374151;
+        font-size: 0.875rem;
+        margin: 0 0 0.25rem 0;
+        font-weight: 500;
+    }
+    
+    .notification-time {
+        color: #6b7280;
+        font-size: 0.75rem;
+        margin: 0;
+    }
+    
+    .app-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+    
+    .app-module {
+        background: white;
+        border-radius: 2rem;
+        padding: 2rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .app-module::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #0284c7, #8b5cf6);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .app-module:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .app-module:hover::before {
+        opacity: 1;
+    }
+    
+    .app-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .model-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .model-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        background: #f9fafb;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .model-item:hover {
+        background: #f3f4f6;
+        transform: translateX(4px);
+    }
+    
+    .model-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: #374151;
+        font-weight: 500;
+        flex: 1;
+    }
+    
+    .model-icon {
+        font-size: 1.25rem;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0284c7, #8b5cf6);
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .model-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .model-action {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+    
+    .model-action.add {
+        background: #10b981;
+        color: white;
+    }
+    
+    .model-action.view {
+        background: #0284c7;
+        color: white;
+    }
+    
+    .model-action:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    @media (max-width: 1024px) {
+        .dashboard-container {
+            padding: 1rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+        
+        .actions-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .app-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .hero-title {
+            font-size: 2rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .hero-icon {
+            font-size: 2.5rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+        }
+        
+        .action-card {
+            padding: 1.5rem;
+        }
+        
+        .dashboard-panel {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}

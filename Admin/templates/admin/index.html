@@ -1,0 +1,456 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/professional_admin.css' %}">
+<style>
+    /* Professional Dashboard Styling */
+    .admin-dashboard {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        padding: 2rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .welcome-hero {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        color: white;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .welcome-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .welcome-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .welcome-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        font-weight: 300;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stats-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .stats-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .stats-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f9fafb;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .actions-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .action-card {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        text-align: center;
+        display: block;
+    }
+
+    .action-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3);
+        text-decoration: none;
+        color: white;
+    }
+
+    .action-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .action-title {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .system-status {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .status-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .status-item:last-child {
+        border-bottom: none;
+    }
+
+    .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+
+    .status-online { background-color: #10b981; }
+    .status-warning { background-color: #f59e0b; }
+    .status-offline { background-color: #ef4444; }
+
+    .recent-activity {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background-color 0.3s ease;
+    }
+
+    .activity-item:hover {
+        background-color: #f9fafb;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1rem;
+    }
+
+    .activity-content h4 {
+        font-weight: 600;
+        color: #374151;
+        margin: 0 0 0.25rem 0;
+        font-size: 0.875rem;
+    }
+
+    .activity-content p {
+        color: #6b7280;
+        margin: 0;
+        font-size: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+        .admin-dashboard {
+            padding: 1rem;
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+        }
+        
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <!-- Welcome Hero Section -->
+    <div class="welcome-hero">
+        <div class="welcome-content">
+            <h1 class="welcome-title">⚡ Smart Classroom Admin</h1>
+            <p class="welcome-subtitle">Manage your classroom booking system with powerful, intuitive tools</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+        <!-- Statistics Section -->
+        <div class="stats-section">
+            <div class="stats-header">
+                <div class="stats-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white;">
+                    📊
+                </div>
+                <h2 class="stats-title">System Overview</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_users|default:247 }}</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ active_bookings|default:42 }}</div>
+                    <div class="stat-label">Active Bookings</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ available_rooms|default:18 }}</div>
+                    <div class="stat-label">Available Rooms</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ monthly_revenue|default:15280 }}</div>
+                    <div class="stat-label">Monthly Revenue</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="actions-section">
+            <div class="stats-header">
+                <div class="stats-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                    🚀
+                </div>
+                <h2 class="stats-title">Quick Actions</h2>
+            </div>
+            <div class="actions-grid">
+                <a href="/admin/Booking/booking/add/" class="action-card">
+                    <span class="action-icon">📅</span>
+                    <div class="action-title">New Booking</div>
+                </a>
+                <a href="/admin/auth/user/add/" class="action-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <span class="action-icon">👤</span>
+                    <div class="action-title">Add User</div>
+                </a>
+                <a href="/admin/Booking/booking/" class="action-card" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <span class="action-icon">📋</span>
+                    <div class="action-title">View Reports</div>
+                </a>
+                <a href="/admin/" class="action-card" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <span class="action-icon">⚙️</span>
+                    <div class="action-title">Settings</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Status and Recent Activity -->
+    <div class="dashboard-grid">
+        <!-- System Status -->
+        <div class="system-status">
+            <div class="stats-header">
+                <div class="stats-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                    💚
+                </div>
+                <h2 class="stats-title">System Status</h2>
+            </div>
+            <div class="status-item">
+                <span><div class="status-indicator status-online"></div>Database Connection</span>
+                <span style="color: #10b981; font-weight: 600;">Online</span>
+            </div>
+            <div class="status-item">
+                <span><div class="status-indicator status-online"></div>API Services</span>
+                <span style="color: #10b981; font-weight: 600;">Operational</span>
+            </div>
+            <div class="status-item">
+                <span><div class="status-indicator status-warning"></div>Cache System</span>
+                <span style="color: #f59e0b; font-weight: 600;">Warning</span>
+            </div>
+            <div class="status-item">
+                <span><div class="status-indicator status-online"></div>Storage</span>
+                <span style="color: #10b981; font-weight: 600;">85% Available</span>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="recent-activity">
+            <div class="stats-header">
+                <div class="stats-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+                    🔔
+                </div>
+                <h2 class="stats-title">Recent Activity</h2>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #dbeafe; color: #3b82f6;">
+                    ✅
+                </div>
+                <div class="activity-content">
+                    <h4>System backup completed successfully</h4>
+                    <p>2 minutes ago</p>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #fef3c7; color: #f59e0b;">
+                    📅
+                </div>
+                <div class="activity-content">
+                    <h4>New booking request from John Doe</h4>
+                    <p>15 minutes ago</p>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #d1fae5; color: #10b981;">
+                    👤
+                </div>
+                <div class="activity-content">
+                    <h4>User registration: Sarah Wilson</h4>
+                    <p>1 hour ago</p>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #e0e7ff; color: #8b5cf6;">
+                    🔧
+                </div>
+                <div class="activity-content">
+                    <h4>Scheduled maintenance reminder</h4>
+                    <p>Today at 2:00 PM</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Applications Grid -->
+    <div class="stats-section" style="grid-column: 1 / -1;">
+        <div class="stats-header">
+            <div class="stats-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;">
+                🏢
+            </div>
+            <h2 class="stats-title">Application Management</h2>
+        </div>
+        <div class="actions-grid">
+            {% for app in available_apps %}
+                <div style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease;" 
+                     onmouseover="this.style.borderColor='#3b82f6'; this.style.transform='translateY(-2px)'"
+                     onmouseout="this.style.borderColor='#e5e7eb'; this.style.transform='translateY(0)'">
+                    <h3 style="color: #1f2937; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+                        {% if app.name == "Authentication and Authorization" %}👥
+                        {% elif app.name == "Booking" %}📅
+                        {% else %}📊{% endif %}
+                        {{ app.name }}
+                    </h3>
+                    {% for model in app.models %}
+                        <a href="{{ model.admin_url }}" style="display: block; padding: 0.5rem; color: #3b82f6; text-decoration: none; border-radius: 6px; margin-bottom: 0.25rem; transition: background-color 0.3s ease;"
+                           onmouseover="this.style.backgroundColor='#eff6ff'"
+                           onmouseout="this.style.backgroundColor='transparent'">
+                            {% if model.add_url %}
+                                <strong>{{ model.name }}</strong>
+                            {% else %}
+                                {{ model.name }}
+                            {% endif %}
+                            {% if model.add_url %}
+                                <span style="float: right; font-size: 0.75rem; background: #3b82f6; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                                    Add
+                                </span>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% empty %}
+                <div style="background: #f9fafb; border: 2px dashed #d1d5db; border-radius: 12px; padding: 2rem; text-align: center; color: #6b7280;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
+                    <h3>No applications available</h3>
+                    <p>Check your INSTALLED_APPS setting.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,719 @@
+/* Custom Admin Panel Styling for Smart Classroom Booking */
+
+/* Override default admin colors */
+:root {
+    --primary: #0E6A6A;
+    --secondary: #2EC4B6;
+    --accent: #f0f9ff;
+    --dark-primary: #0a5a5a;
+    --light-primary: #e0f2f1;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+}
+
+/* Global admin styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styling */
+#header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+    border-bottom: 3px solid var(--dark-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+#header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+}
+
+#branding {
+    position: relative;
+    z-index: 1;
+}
+
+#branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: white !important;
+    font-weight: bold;
+    font-size: 28px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    margin: 0;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+}
+
+#branding h1::before {
+    content: "🏫";
+    font-size: 32px;
+    margin-right: 15px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+#user-tools {
+    position: relative;
+    z-index: 1;
+    padding: 15px 20px;
+}
+
+#user-tools a:link, #user-tools a:visited {
+    color: white !important;
+    border-radius: 25px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    margin-left: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#user-tools a:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation and sidebar styling */
+.module h2, .module caption, .inline-group h2 {
+    background: linear-gradient(90deg, var(--primary), var(--secondary)) !important;
+    color: white !important;
+    font-weight: bold;
+    border-radius: 12px 12px 0 0;
+    padding: 15px 20px;
+    border: none;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.module h2::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.module h2:hover::before {
+    left: 100%;
+}
+
+/* Form styling */
+.submit-row {
+    background: var(--light-primary) !important;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.default, input[type=submit].default, .submit-row input[type=submit] {
+    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+    border: none !important;
+    color: white !important;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.default:hover, input[type=submit].default:hover, .submit-row input[type=submit]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(14, 106, 106, 0.4);
+}
+
+.default::before, input[type=submit].default::before, .submit-row input[type=submit]::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.default:hover::before, input[type=submit].default:hover::before, .submit-row input[type=submit]:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Table styling */
+#changelist table {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#changelist table thead th {
+    background: linear-gradient(90deg, var(--primary), var(--secondary)) !important;
+    color: white !important;
+    border-bottom: 2px solid var(--dark-primary);
+    padding: 15px 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 13px;
+}
+
+#changelist table tbody tr {
+    transition: all 0.3s ease;
+}
+
+#changelist table tbody tr:nth-child(even) {
+    background: var(--accent) !important;
+}
+
+#changelist table tbody tr:hover {
+    background: var(--light-primary) !important;
+    transform: scale(1.01);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+#changelist table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    background: var(--light-primary) !important;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.breadcrumbs a {
+    color: var(--primary) !important;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.breadcrumbs a:hover {
+    color: var(--secondary) !important;
+    text-decoration: underline;
+}
+
+/* Sidebar styling */
+#changelist-sidebar {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#changelist-sidebar h2 {
+    background: linear-gradient(90deg, var(--primary), var(--secondary)) !important;
+    color: white !important;
+    padding: 12px 18px;
+    border-radius: 0;
+    margin: 0 0 15px 0;
+    font-size: 14px;
+}
+
+#changelist-sidebar h3 {
+    background: var(--light-primary) !important;
+    color: var(--primary) !important;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border-left: 4px solid var(--primary);
+    margin: 10px 15px;
+    font-size: 13px;
+}
+
+#changelist-sidebar ul {
+    padding: 0 15px 15px 15px;
+}
+
+#changelist-sidebar li {
+    padding: 5px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+#changelist-sidebar a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+#changelist-sidebar a:hover {
+    color: var(--secondary);
+}
+
+/* Action buttons */
+.button, input[type=submit], input[type=button], .submit-row input, button {
+    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(14, 106, 106, 0.3);
+}
+
+/* Special action button colors */
+.addlink {
+    background: linear-gradient(135deg, var(--success), #16a085) !important;
+}
+
+.changelink {
+    background: linear-gradient(135deg, var(--info), #1e40af) !important;
+}
+
+.deletelink {
+    background: linear-gradient(135deg, var(--danger), #dc2626) !important;
+}
+
+.addlink:hover {
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+.changelink:hover {
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+}
+
+.deletelink:hover {
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Cards and modules */
+.module {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.module:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Form field styling */
+input[type="text"], input[type="password"], input[type="email"], input[type="url"],
+input[type="number"], input[type="tel"], input[type="date"], input[type="datetime-local"],
+textarea, select {
+    border: 2px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease;
+    background: white !important;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus,
+input[type="url"]:focus, input[type="number"]:focus, input[type="tel"]:focus,
+input[type="date"]:focus, input[type="datetime-local"]:focus,
+textarea:focus, select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(14, 106, 106, 0.1) !important;
+    outline: none !important;
+    transform: translateY(-1px);
+}
+
+/* File input styling */
+input[type="file"] {
+    border: 2px dashed #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 20px !important;
+    background: #f9fafb !important;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]:hover {
+    border-color: var(--primary) !important;
+    background: var(--accent) !important;
+}
+
+/* Message styling */
+.success {
+    background: linear-gradient(90deg, var(--success), #16a085) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-weight: 600;
+    margin: 15px 0;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.error, .errornote {
+    background: linear-gradient(90deg, var(--danger), #dc2626) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-weight: 600;
+    margin: 15px 0;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.info {
+    background: linear-gradient(90deg, var(--info), #1e40af) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-weight: 600;
+    margin: 15px 0;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.warning {
+    background: linear-gradient(90deg, var(--warning), #d97706) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-weight: 600;
+    margin: 15px 0;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Dashboard styling */
+.dashboard .module {
+    transition: all 0.3s ease;
+}
+
+.dashboard .module:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard .module h2 {
+    font-size: 18px;
+    text-align: center;
+    padding: 20px;
+}
+
+.dashboard .module table {
+    margin: 0;
+}
+
+.dashboard .module table td {
+    padding: 12px 20px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.dashboard .module table td a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.dashboard .module table td a:hover {
+    color: var(--secondary);
+}
+
+/* Pagination */
+.paginator {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.paginator a, .paginator .this-page {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 2px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.paginator a {
+    background: var(--light-primary);
+    color: var(--primary);
+}
+
+.paginator a:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.paginator .this-page {
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+}
+
+/* Filter styling */
+#changelist-filter {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#changelist-filter h2 {
+    background: linear-gradient(90deg, var(--primary), var(--secondary)) !important;
+    color: white !important;
+    padding: 15px 20px;
+    margin: 0;
+    font-size: 16px;
+}
+
+#changelist-filter h3 {
+    background: var(--light-primary);
+    color: var(--primary);
+    padding: 12px 20px;
+    margin: 15px 0 10px 0;
+    border-radius: 0;
+    border-left: 4px solid var(--primary);
+}
+
+#changelist-filter ul {
+    padding: 0 20px 20px 20px;
+}
+
+#changelist-filter li {
+    padding: 5px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+#changelist-filter a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+#changelist-filter a:hover {
+    color: var(--secondary);
+}
+
+#changelist-filter li.selected a {
+    color: var(--secondary);
+    font-weight: bold;
+}
+
+/* Loading animation */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(46, 196, 182, 0.3), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary), var(--secondary));
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--dark-primary), var(--primary));
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #header #branding h1 {
+        font-size: 20px;
+        padding: 10px 15px;
+    }
+    
+    #user-tools {
+        padding: 10px 15px;
+    }
+    
+    #user-tools a {
+        padding: 8px 15px;
+        font-size: 13px;
+    }
+    
+    .submit-row {
+        text-align: center;
+    }
+    
+    .module h2 {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+    
+    #changelist table {
+        font-size: 13px;
+    }
+    
+    #changelist table thead th {
+        padding: 10px 8px;
+    }
+    
+    #changelist table tbody td {
+        padding: 8px;
+    }
+}
+
+/* Advanced animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.module {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+#changelist-sidebar {
+    animation: fadeInLeft 0.6s ease-out;
+}
+
+/* Special status badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-approved {
+    background: var(--success);
+    color: white;
+}
+
+.status-pending {
+    background: var(--warning);
+    color: white;
+}
+
+.status-rejected {
+    background: var(--danger);
+    color: white;
+}
+
+/* Enhanced button effects */
+.button-glow {
+    position: relative;
+    overflow: hidden;
+}
+
+.button-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.button-glow:hover::before {
+    left: 100%;
+}
+
+/* Print styles */
+@media print {
+    #header, #changelist-sidebar, #changelist-filter, .paginator {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+    
+    .module {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+}

@@ -1,28 +1,195 @@
 {% extends "layout.html" %}
 {% load static %}
 {% block content %}
-<div class="max-w-lg mx-auto bg-white rounded-xl shadow-md p-8 mt-8">
-    <h2 class="text-2xl font-bold text-[#0E6A6A] mb-4">Book the Classroom</h2>
-    <form method="post" enctype="multipart/form-data" class="space-y-4">
+<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8 mt-8">
+    <!-- Back to Calendar Link -->
+    <div class="mb-6">
+        <a href="{% url 'booking' %}{% if week_offset != 0 %}?week={{ week_offset }}{% endif %}" 
+           class="inline-flex items-center text-[#0E6A6A] hover:text-[#2EC4B6] font-semibold transition group">
+            <svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to Calendar
+        </a>
+    </div>
+    
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-[#0E6A6A] to-[#2EC4B6] rounded-full mb-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Book Smart Classroom</h2>
+        <p class="text-gray-600">Reserve your one-hour time slot for the smart classroom</p>
+    </div>
+
+    <!-- Booking Info Box -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Booking Information</h3>
+                <ul class="mt-2 text-sm text-blue-700 space-y-1">
+                    <li>• Each booking is exactly <strong>1 hour</strong></li>
+                    <li>• All bookings require admin approval</li>
+                    <li>• Payment receipt upload is required</li>
+                    <li>• You will receive confirmation via email</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Form -->
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
-        {{ form.non_field_errors }}
-        {% for field in form %}
+        
+        <!-- Display non-field errors -->
+        {% if form.non_field_errors %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="flex">
+                    <svg class="w-5 h-5 text-red-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <div class="ml-3">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Form Fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Booking Date -->
+            <div class="md:col-span-1">
+                <label class="block text-sm font-semibold text-gray-700 mb-2" for="{{ form.booking_date.id_for_label }}">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    {{ form.booking_date.label }}
+                </label>
+                {{ form.booking_date }}
+                {% if form.booking_date.errors %}
+                    <div class="mt-1 text-red-600 text-sm">{{ form.booking_date.errors|striptags }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Time Slot -->
+            <div class="md:col-span-1">
+                <label class="block text-sm font-semibold text-gray-700 mb-2" for="{{ form.time_slot.id_for_label }}">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {{ form.time_slot.label }}
+                </label>
+                {{ form.time_slot }}
+                {% if form.time_slot.errors %}
+                    <div class="mt-1 text-red-600 text-sm">{{ form.time_slot.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Purpose -->
         <div>
-            <label class="block font-semibold mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}
-                <div class="text-red-600 text-xs">{{ field.errors|striptags }}</div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2" for="{{ form.purpose.id_for_label }}">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                {{ form.purpose.label }}
+            </label>
+            {{ form.purpose }}
+            {% if form.purpose.errors %}
+                <div class="mt-1 text-red-600 text-sm">{{ form.purpose.errors|striptags }}</div>
             {% endif %}
         </div>
-        {% endfor %}
+
+        <!-- Attendees -->
         <div>
-            <label class="block font-semibold mb-1" for="id_receipt">Upload Payment Receipt (Image)</label>
-            <input type="file" name="receipt" id="id_receipt" accept="image/*" class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A] bg-blue-50/30" />
+            <label class="block text-sm font-semibold text-gray-700 mb-2" for="{{ form.attendees.id_for_label }}">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                {{ form.attendees.label }}
+            </label>
+            {{ form.attendees }}
+            {% if form.attendees.errors %}
+                <div class="mt-1 text-red-600 text-sm">{{ form.attendees.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2" for="{{ form.description.id_for_label }}">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                </svg>
+                {{ form.description.label }}
+            </label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="mt-1 text-red-600 text-sm">{{ form.description.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Payment Receipt Upload -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2" for="id_receipt">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+                Upload Payment Receipt <span class="text-red-500">*</span>
+            </label>
+            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#0E6A6A] transition-colors">
+                <div class="space-y-1 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div class="flex text-sm text-gray-600">
+                        <input type="file" name="receipt" id="id_receipt" accept="image/*" required 
+                               class="sr-only" onchange="updateFileName(this)">
+                        <label for="id_receipt" class="relative cursor-pointer bg-white rounded-md font-medium text-[#0E6A6A] hover:text-[#2EC4B6] focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[#0E6A6A]">
+                            <span>Upload a file</span>
+                        </label>
+                        <p class="pl-1">or drag and drop</p>
+                    </div>
+                    <p class="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB</p>
+                    <p id="file-name" class="text-sm text-gray-700 font-medium"></p>
+                </div>
+            </div>
             {% if form.receipt.errors %}
-                <div class="text-red-600 text-xs">{{ form.receipt.errors|striptags }}</div>
+                <div class="mt-1 text-red-600 text-sm">{{ form.receipt.errors|striptags }}</div>
             {% endif %}
         </div>
-        <button type="submit" class="w-full py-2 px-4 bg-[#0E6A6A] hover:bg-[#2EC4B6] text-white font-semibold rounded-lg shadow transition">Book Now</button>
+
+        <!-- Submit Button -->
+        <div class="pt-4">
+            <button type="submit" 
+                    class="w-full flex justify-center items-center py-3 px-6 bg-gradient-to-r from-[#0E6A6A] to-[#2EC4B6] hover:from-[#2EC4B6] hover:to-[#0E6A6A] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Submit Booking Request
+            </button>
+        </div>
     </form>
 </div>
+
+<script>
+function updateFileName(input) {
+    const fileName = document.getElementById('file-name');
+    if (input.files && input.files[0]) {
+        fileName.textContent = `Selected: ${input.files[0].name}`;
+        fileName.classList.add('text-[#0E6A6A]');
+    } else {
+        fileName.textContent = '';
+        fileName.classList.remove('text-[#0E6A6A]');
+    }
+}
+</script>
 {% endblock %}

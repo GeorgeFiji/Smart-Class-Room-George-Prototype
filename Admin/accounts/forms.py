@@ -5,52 +5,45 @@ from django.contrib.auth.models import User
 class CustomUserRegistrationForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
-        help_text='Required. Enter a valid email address to receive notifications.',
+        help_text='Required. Enter a valid email address.',
         widget=forms.EmailInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A]',
-            'placeholder': 'your.email@example.com'
+            'class': 'w-full px-4 py-2 border border-blue-200 rounded-xl focus:ring-2 focus:ring-[#2EC4B6] focus:border-[#0E6A6A] bg-blue-50/30 placeholder-gray-400',
+            'placeholder': 'Your email address'
         })
     )
-    first_name = forms.CharField(
-        max_length=30,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A]',
-            'placeholder': 'First Name'
-        })
-    )
-    last_name = forms.CharField(
-        max_length=30,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A]',
-            'placeholder': 'Last Name'
-        })
-    )
-
+    
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
-
+        fields = ("username", "email", "password1", "password2")
+        
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Apply custom CSS classes to all fields
-        for field_name in self.fields:
-            if field_name not in ['email', 'first_name', 'last_name']:  # These already have custom widgets
-                self.fields[field_name].widget.attrs.update({
-                    'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E6A6A] focus:border-[#0E6A6A]'
-                })
         
-        # Custom placeholders
-        self.fields['username'].widget.attrs['placeholder'] = 'Username'
-        self.fields['password1'].widget.attrs['placeholder'] = 'Password'
-        self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
-
+        # Add styling to all form fields
+        self.fields['username'].widget.attrs.update({
+            'class': 'w-full px-4 py-2 border border-blue-200 rounded-xl focus:ring-2 focus:ring-[#2EC4B6] focus:border-[#0E6A6A] bg-blue-50/30 placeholder-gray-400',
+            'placeholder': 'Your username'
+        })
+        
+        self.fields['password1'].widget.attrs.update({
+            'class': 'w-full px-4 py-2 border border-blue-200 rounded-xl focus:ring-2 focus:ring-[#2EC4B6] focus:border-[#0E6A6A] bg-blue-50/30 placeholder-gray-400',
+            'placeholder': '••••••••'
+        })
+        
+        self.fields['password2'].widget.attrs.update({
+            'class': 'w-full px-4 py-2 border border-blue-200 rounded-xl focus:ring-2 focus:ring-[#2EC4B6] focus:border-[#0E6A6A] bg-blue-50/30 placeholder-gray-400',
+            'placeholder': '••••••••'
+        })
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("A user with this email already exists.")
+        return email
+    
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data["email"]
         if commit:
             user.save()
         return user

@@ -1,0 +1,295 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_admin.css' %}">
+<style>
+    /* Enhanced module animations */
+    .module h2, .module caption {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .module h2::after, .module caption::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+    
+    /* Enhanced breadcrumbs */
+    .breadcrumbs {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+    }
+    
+    .breadcrumbs a {
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        padding: 0.25rem 0.5rem !important;
+        border-radius: 0.375rem !important;
+    }
+    
+    .breadcrumbs a:hover {
+        background: rgba(37, 99, 235, 0.1) !important;
+        transform: translateY(-1px) !important;
+    }
+    
+    /* Page title with enhanced styling */
+    #content h1 {
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    #content h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa);
+        transform: scaleX(0);
+        transform-origin: left;
+        animation: expandBorder 1s ease-out 0.5s forwards;
+    }
+    
+    @keyframes expandBorder {
+        to { transform: scaleX(1); }
+    }
+    
+    /* Enhanced message styling */
+    .messagelist .success {
+        border-left: 4px solid #10b981 !important;
+    }
+    
+    .messagelist .error {
+        border-left: 4px solid #ef4444 !important;
+    }
+    
+    .messagelist .warning {
+        border-left: 4px solid #f59e0b !important;
+    }
+    
+    .messagelist .info {
+        border-left: 4px solid #3b82f6 !important;
+    }
+    
+    /* Enhanced footer */
+    #footer {
+        background: linear-gradient(135deg, #1f2937, #374151) !important;
+        color: white !important;
+        text-align: center !important;
+        padding: 1.5rem !important;
+        margin-top: 3rem !important;
+        border-radius: 1rem 1rem 0 0 !important;
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    #footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa);
+    }
+    
+    #footer p {
+        margin: 0 !important;
+        font-weight: 500 !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+    
+    /* Loading animation enhancement */
+    .loading-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(15, 23, 42, 0.1) !important;
+        backdrop-filter: blur(8px) !important;
+        display: none !important;
+        justify-content: center !important;
+        align-items: center !important;
+        z-index: 9999 !important;
+    }
+    
+    .spinner {
+        width: 60px !important;
+        height: 60px !important;
+        border: 4px solid rgba(37, 99, 235, 0.1) !important;
+        border-top: 4px solid #2563eb !important;
+        border-radius: 50% !important;
+        animation: spin 1s linear infinite !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Enhanced table hover effects */
+    .results tbody tr,
+    .module tbody tr {
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    .results tbody tr:hover,
+    .module tbody tr:hover {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.05)) !important;
+        transform: translateX(4px) scale(1.002) !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+    }
+    
+    /* Enhanced form focus states */
+    input:focus,
+    select:focus,
+    textarea:focus {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    }
+    
+    /* Responsive enhancements */
+    @media (max-width: 768px) {
+        #footer {
+            margin-top: 2rem !important;
+            padding: 1rem !important;
+            border-radius: 0 !important;
+        }
+        
+        .results tbody tr:hover,
+        .module tbody tr:hover {
+            transform: none !important;
+        }
+    }
+    
+    /* Print optimizations */
+    @media print {
+        .loading-overlay,
+        #footer::before {
+            display: none !important;
+        }
+        
+        #footer {
+            background: white !important;
+            color: black !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced loading animation for form submissions
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            // Only show loading for forms that change data (not search forms)
+            if (!this.method || this.method.toLowerCase() !== 'get') {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.style.display = 'flex';
+                overlay.innerHTML = '<div class="spinner"></div>';
+                document.body.appendChild(overlay);
+                
+                // Remove overlay after 10 seconds as fallback
+                setTimeout(() => {
+                    if (document.body.contains(overlay)) {
+                        document.body.removeChild(overlay);
+                    }
+                }, 10000);
+            }
+        });
+    });
+    
+    // Enhanced smooth scrolling
+    document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Enhanced table row hover effects with better performance
+    const tables = document.querySelectorAll('table');
+    tables.forEach(table => {
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.willChange = 'transform, background-color';
+            });
+            row.addEventListener('mouseleave', function() {
+                this.style.willChange = 'auto';
+            });
+        });
+    });
+    
+    // Add keyboard navigation enhancements
+    document.addEventListener('keydown', function(e) {
+        // Alt + H for home/dashboard
+        if (e.altKey && e.key === 'h') {
+            window.location.href = '/admin/';
+        }
+        // Alt + L for logout
+        if (e.altKey && e.key === 'l') {
+            const logoutLink = document.querySelector('a[href*="logout"]');
+            if (logoutLink) logoutLink.click();
+        }
+    });
+    
+    // Enhanced accessibility features
+    const interactiveElements = document.querySelectorAll('a, button, input, select, textarea');
+    interactiveElements.forEach(element => {
+        element.addEventListener('focus', function() {
+            this.style.outline = '2px solid #2563eb';
+            this.style.outlineOffset = '2px';
+        });
+        element.addEventListener('blur', function() {
+            this.style.outline = '';
+            this.style.outlineOffset = '';
+        });
+    });
+    
+    // Performance optimization: Intersection Observer for animations
+    if ('IntersectionObserver' in window) {
+        const animateOnScroll = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.module, .results, fieldset').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            animateOnScroll.observe(el);
+        });
+    }
+});
+</script>
+{% endblock %}
+
+{% block footer %}
+<div id="footer">
+    <p>
+        🏫 Smart Classroom Booking System Admin Panel | 
+        Powered by Django | 
+        Welcome, {{ user.get_full_name|default:user.username|default:"Admin" }}
+    </p>
+</div>
+{% endblock %}

@@ -8,15 +8,32 @@ from .email_utils import send_booking_confirmation_email, send_admin_notificatio
 from django.contrib import messages
 
 def booking_view(request):
-    # Show all bookings for the week in the calendar
+    # Get week offset from URL parameter (default to current week)
+    week_offset = int(request.GET.get('week', 0))
+    
+    # Calculate the start of the target week
     today = datetime.today()
-    start = today - timedelta(days=today.weekday())
+    current_week_start = today - timedelta(days=today.weekday())
+    start = current_week_start + timedelta(weeks=week_offset)
+    
+    # Generate day_dates for the target week
     day_dates = [( (start + timedelta(days=i)).strftime('%A'), (start + timedelta(days=i)).strftime('%Y-%m-%d') ) for i in range(7)]
     hours = list(range(7, 23))  # 7AM to 10PM
-    # Only show bookings for this week
+    
+    # Only show bookings for this specific week
     week_start = start.replace(hour=0, minute=0, second=0, microsecond=0)
     week_end = week_start + timedelta(days=7)
     bookings = Booking.objects.filter(start_time__gte=week_start, start_time__lt=week_end)
+    
+    # Calculate navigation weeks
+    prev_week = week_offset - 1
+    next_week = week_offset + 1
+    
+    # Format week display
+    week_display = f"{start.strftime('%B %d')} - {(start + timedelta(days=6)).strftime('%B %d, %Y')}"
+    
+    # Check if this is current week
+    is_current_week = week_offset == 0
     # Define a color palette
     color_palette = [
         "from-green-400/95 to-green-600/95",
@@ -41,25 +58,36 @@ def booking_view(request):
         'hours': hours,
         'day_dates': day_dates,
         'user_color_map': user_color_map,
+        'week_offset': week_offset,
+        'prev_week': prev_week,
+        'next_week': next_week,
+        'week_display': week_display,
+        'is_current_week': is_current_week,
     })
 
 
 @login_required
 def create_booking(request):
+    # Get week offset from request
+    week_offset = request.GET.get('week', 0)
+    try:
+        week_offset = int(week_offset)
+    except (ValueError, TypeError):
+        week_offset = 0
+    
     # Pre-fill form if slot info is passed
     initial = {}
-    day = request.GET.get('day')
     date = request.GET.get('date')
     hour = request.GET.get('hour')
     if date and hour:
-        # Try to build a start_time from date and hour
+        # Pre-fill the date and time slot
         try:
-            start_time = datetime.strptime(f"{date} {hour}", "%Y-%m-%d %H")
-            end_time = start_time.replace(hour=start_time.hour+1)
-            initial['start_time'] = start_time
-            initial['end_time'] = end_time
+            booking_date = datetime.strptime(date, "%Y-%m-%d").date()
+            initial['booking_date'] = booking_date
+            initial['time_slot'] = f"{hour:02d}:00"
         except Exception:
             pass
+    
     if request.method == 'POST':
         form = BookingForm(request.POST, request.FILES)
         if form.is_valid():
@@ -88,7 +116,15 @@ def create_booking(request):
             # Send notification email to admins
             send_admin_notification_email(booking)
             
-            return redirect('booking')
+            # Redirect back to the correct week
+            if week_offset != 0:
+                return redirect(f"/booking/book/?week={week_offset}")
+            else:
+                return redirect('booking')
     else:
         form = BookingForm(initial=initial)
-    return render(request, 'create_booking.html', {'form': form})
+    
+    return render(request, 'create_booking.html', {
+        'form': form,
+        'week_offset': week_offset,
+    })

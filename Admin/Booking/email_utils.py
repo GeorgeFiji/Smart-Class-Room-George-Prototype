@@ -5,18 +5,30 @@ from django.utils.html import strip_tags
 
 def send_welcome_email(user):
     """Send welcome email to newly registered user"""
+    print(f"DEBUG: Starting to send welcome email to {user.email}")
+    
     subject = 'Welcome to Smart Classroom Booking System!'
     
     # Render HTML email template
-    html_message = render_to_string('emails/welcome_email.html', {
-        'user': user,
-        'site_name': 'Smart Classroom Booking System'
-    })
+    try:
+        html_message = render_to_string('emails/welcome_email.html', {
+            'user': user,
+            'site_name': 'Smart Classroom Booking System'
+        })
+        print(f"DEBUG: HTML template rendered successfully")
+    except Exception as e:
+        print(f"DEBUG: Template rendering failed: {e}")
+        return False
     
     # Create plain text version
     plain_message = strip_tags(html_message)
+    print(f"DEBUG: Plain text version created")
     
     try:
+        print(f"DEBUG: Attempting to send email...")
+        print(f"DEBUG: From email: {settings.DEFAULT_FROM_EMAIL}")
+        print(f"DEBUG: To email: {user.email}")
+        
         send_mail(
             subject=subject,
             message=plain_message,
@@ -25,9 +37,11 @@ def send_welcome_email(user):
             html_message=html_message,
             fail_silently=False,
         )
+        print(f"DEBUG: Email sent successfully!")
         return True
     except Exception as e:
-        print(f"Error sending welcome email: {e}")
+        print(f"DEBUG: Error sending welcome email: {e}")
+        print(f"DEBUG: Exception type: {type(e).__name__}")
         return False
 
 def send_booking_confirmation_email(booking):

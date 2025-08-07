@@ -8,8 +8,14 @@
     <!-- Profile Card -->
     <div class="flex flex-col md:flex-row gap-8 items-center bg-white rounded-2xl shadow-lg p-8 border border-blue-100 mb-8">
         <div class="flex-shrink-0">
-            <!-- Simple Avatar -->
-            <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username }}&background=0E6A6A&color=fff&size=128" alt="Avatar" class="w-32 h-32 rounded-full border-4 border-blue-200 shadow object-cover">
+            <!-- Profile Picture -->
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-blue-200 shadow object-cover">
+            {% else %}
+                <div class="w-32 h-32 rounded-full bg-gradient-to-r from-[#0E6A6A] to-[#2EC4B6] flex items-center justify-center text-white font-bold text-4xl border-4 border-blue-200 shadow">
+                    {{ user.get_full_name|default:user.username|first|upper }}
+                </div>
+            {% endif %}
         </div>
         <div class="flex-1">
             <h1 class="text-3xl font-extrabold text-[#0E6A6A] mb-2">Welcome, {{ user.get_full_name|default:user.username }}</h1>

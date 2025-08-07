@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #0E6A6A, #2EC4B6); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+        .booking-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0E6A6A; }
+        .status-pending { color: #f59e0b; font-weight: bold; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Booking Confirmation</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{ user.get_full_name|default:user.username }}!</h2>
+            
+            <p>Your classroom booking request has been successfully submitted and is now <span class="status-pending">pending approval</span>.</p>
+            
+            <div class="booking-details">
+                <h3>📋 Booking Details</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Purpose:</td>
+                        <td style="padding: 8px 0;">{{ booking.purpose }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Date & Time:</td>
+                        <td style="padding: 8px 0;">{{ booking.start_time|date:"F d, Y" }} from {{ booking.start_time|time:"g:i A" }} to {{ booking.end_time|time:"g:i A" }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Duration:</td>
+                        <td style="padding: 8px 0;">
+                            {% widthratio booking.end_time|timesince:booking.start_time 1 1 %} hour(s)
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Attendees:</td>
+                        <td style="padding: 8px 0;">{{ booking.attendees }} people</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Status:</td>
+                        <td style="padding: 8px 0;"><span class="status-pending">{{ booking.status|title }}</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold;">Booking ID:</td>
+                        <td style="padding: 8px 0;">#{{ booking.id }}</td>
+                    </tr>
+                </table>
+                
+                {% if booking.description %}
+                <div style="margin-top: 15px;">
+                    <strong>Description:</strong><br>
+                    <p style="margin: 5px 0; font-style: italic;">{{ booking.description }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <p><strong>⏳ What happens next?</strong></p>
+            <ol>
+                <li>Our admin team will review your booking request</li>
+                <li>You'll receive an email notification once your booking is approved or rejected</li>
+                <li>If approved, you can access the classroom at your scheduled time</li>
+            </ol>
+            
+            <p><strong>📧 Need to make changes?</strong><br>
+            Please contact our admin team if you need to modify or cancel your booking.</p>
+            
+            <p>Thank you for using Smart Classroom Booking System!</p>
+            
+            <p>Best regards,<br>
+            <strong>Smart Classroom Booking Team</strong></p>
+        </div>
+        <div class="footer">
+            <p>Booking submitted on {{ booking.created_at|date:"F d, Y \a\t g:i A" }}<br>
+            Reference ID: #{{ booking.id }}</p>
+        </div>
+    </div>
+</body>
+</html>

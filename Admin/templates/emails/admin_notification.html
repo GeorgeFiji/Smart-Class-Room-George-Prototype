@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Booking Request</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #dc2626, #f59e0b); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+        .booking-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc2626; }
+        .button { display: inline-block; background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔔 New Booking Request</h1>
+        </div>
+        <div class="content">
+            <h2>Admin Notification</h2>
+            
+            <p>A new classroom booking request has been submitted and requires your review.</p>
+            
+            <div class="booking-details">
+                <h3>📋 Booking Details</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">User:</td>
+                        <td style="padding: 8px 0;">{{ user.get_full_name|default:user.username }} ({{ user.email }})</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Purpose:</td>
+                        <td style="padding: 8px 0;">{{ booking.purpose }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Date & Time:</td>
+                        <td style="padding: 8px 0;">{{ booking.start_time|date:"F d, Y" }} from {{ booking.start_time|time:"g:i A" }} to {{ booking.end_time|time:"g:i A" }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Duration:</td>
+                        <td style="padding: 8px 0;">
+                            {% widthratio booking.end_time|timesince:booking.start_time 1 1 %} hour(s)
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Attendees:</td>
+                        <td style="padding: 8px 0;">{{ booking.attendees }} people</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px 0; font-weight: bold;">Status:</td>
+                        <td style="padding: 8px 0; color: #f59e0b; font-weight: bold;">{{ booking.status|title }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold;">Booking ID:</td>
+                        <td style="padding: 8px 0;">#{{ booking.id }}</td>
+                    </tr>
+                </table>
+                
+                {% if booking.description %}
+                <div style="margin-top: 15px;">
+                    <strong>Description:</strong><br>
+                    <p style="margin: 5px 0; font-style: italic;">{{ booking.description }}</p>
+                </div>
+                {% endif %}
+                
+                {% if booking.receipt %}
+                <div style="margin-top: 15px;">
+                    <strong>Payment Receipt:</strong> Uploaded ✅
+                </div>
+                {% else %}
+                <div style="margin-top: 15px;">
+                    <strong>Payment Receipt:</strong> <span style="color: #ef4444;">Not uploaded ❌</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <p><strong>⚡ Action Required:</strong></p>
+            <p>Please review this booking request and approve or reject it through the admin panel.</p>
+            
+            <a href="{{ admin_booking_url }}" class="button">Review in Admin Panel</a>
+            
+            <p><strong>Quick Actions:</strong></p>
+            <ul>
+                <li>Check for scheduling conflicts</li>
+                <li>Verify payment receipt (if uploaded)</li>
+                <li>Approve or reject with appropriate reason</li>
+                <li>User will be notified automatically of your decision</li>
+            </ul>
+            
+            <p>Best regards,<br>
+            <strong>Smart Classroom Booking System</strong></p>
+        </div>
+        <div class="footer">
+            <p>Request submitted on {{ booking.created_at|date:"F d, Y \a\t g:i A" }}<br>
+            Reference ID: #{{ booking.id }}</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to {{ site_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #0E6A6A, #2EC4B6); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+        .button { display: inline-block; background: #0E6A6A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Smart Classroom Booking!</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{ user.get_full_name|default:user.username }}!</h2>
+            
+            <p>Thank you for registering with our Smart Classroom Booking System. Your account has been successfully created!</p>
+            
+            <p><strong>Your Account Details:</strong></p>
+            <ul>
+                <li><strong>Username:</strong> {{ user.username }}</li>
+                <li><strong>Email:</strong> {{ user.email }}</li>
+                <li><strong>Registration Date:</strong> {{ user.date_joined|date:"F d, Y" }}</li>
+            </ul>
+            
+            <p>You can now:</p>
+            <ul>
+                <li>✅ Browse available classroom time slots</li>
+                <li>✅ Make booking requests</li>
+                <li>✅ Upload payment receipts</li>
+                <li>✅ Track your booking status</li>
+                <li>✅ View your booking history</li>
+            </ul>
+            
+            <p>Ready to make your first booking?</p>
+            <a href="http://localhost:8000/login/" class="button">Login to Your Account</a>
+            
+            <p><strong>Need Help?</strong><br>
+            If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+            
+            <p>Best regards,<br>
+            <strong>Smart Classroom Booking Team</strong></p>
+        </div>
+        <div class="footer">
+            <p>This email was sent from Smart Classroom Booking System.<br>
+            If you didn't register for this account, please ignore this email.</p>
+        </div>
+    </div>
+</body>
+</html>

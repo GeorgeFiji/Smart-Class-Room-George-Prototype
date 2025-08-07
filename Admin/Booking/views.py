@@ -4,6 +4,8 @@ from .forms import BookingForm
 from .models import Booking
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
+from .email_utils import send_booking_confirmation_email, send_admin_notification_email
+from django.contrib import messages
 
 def booking_view(request):
     # Show all bookings for the week in the calendar
@@ -59,12 +61,33 @@ def create_booking(request):
         except Exception:
             pass
     if request.method == 'POST':
-        form = BookingForm(request.POST)
+        form = BookingForm(request.POST, request.FILES)
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
             booking.status = 'pending'
+            
+            # Handle receipt upload
+            if 'receipt' in request.FILES:
+                booking.receipt = request.FILES['receipt']
+            
             booking.save()
+            
+            # Send confirmation email to user
+            if request.user.email:
+                email_sent = send_booking_confirmation_email(booking)
+                if email_sent:
+                    messages.success(request, 'Booking created successfully! A confirmation email has been sent.')
+                else:
+                    messages.success(request, 'Booking created successfully!')
+                    messages.warning(request, 'Confirmation email could not be sent.')
+            else:
+                messages.success(request, 'Booking created successfully!')
+                messages.info(request, 'Add your email address to receive booking notifications.')
+            
+            # Send notification email to admins
+            send_admin_notification_email(booking)
+            
             return redirect('booking')
     else:
         form = BookingForm(initial=initial)

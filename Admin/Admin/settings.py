@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Booking',  # Assuming 'Booking' is an app in your project
+    'accounts',  # Added for email authentication
 ]
 
 MIDDLEWARE = [
@@ -117,6 +118,23 @@ import os
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Email Configuration (using Gmail SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'smartbookingusp@gmail.com'
+EMAIL_HOST_PASSWORD = 'sxfz twfd sydk pevt' 
+DEFAULT_FROM_EMAIL = 'smartbookingusp@gmail.com'
+
+# For development/testing, you can switch back to console backend:
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Authentication Backend for email login
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -140,5 +158,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/login/'
+# Login URLs
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'

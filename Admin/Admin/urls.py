@@ -11,6 +11,7 @@ urlpatterns = [
 
     # Home page (requires user to be logged in, see views.py)
     path('', views.DashboardView, name='Dashboard'),
+    path('dashboard/', views.DashboardView, name='dashboard'),
 
     # About page (requires user to be logged in, see views.py)
     path('about/', views.about, name='about'),
